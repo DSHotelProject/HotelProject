@@ -13,7 +13,7 @@ import javax.persistence.Query;
  * @author Michal Stanke <stankmic@fel.cvut.cz>
  */
 public class HotelProject {
-
+//neco
     public static void main(String[] args) {
 //Entity manager and transaction
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
