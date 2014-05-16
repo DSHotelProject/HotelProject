@@ -40,9 +40,29 @@ public class GUI extends javax.swing.JFrame {
         backButton2 = new javax.swing.JButton();
         backButton3 = new javax.swing.JButton();
         backButton4 = new javax.swing.JButton();
+        pocetTriple = new javax.swing.JLabel();
+        pocetDouble = new javax.swing.JLabel();
+        pocetSingle = new javax.swing.JLabel();
         trippleRadioButton = new javax.swing.JRadioButton();
         doubleRadioButton = new javax.swing.JRadioButton();
         singleRadioButton = new javax.swing.JRadioButton();
+        jmenoLabel = new javax.swing.JTextField();
+        prijmeniLabel = new javax.swing.JTextField();
+        mestoLabel = new javax.swing.JTextField();
+        statLabel = new javax.swing.JTextField();
+        uliceLabel = new javax.swing.JTextField();
+        cpLabel = new javax.swing.JTextField();
+        pscLabel = new javax.swing.JTextField();
+        telefonLabel = new javax.swing.JTextField();
+        emailLabel = new javax.swing.JTextField();
+        obchLabel = new javax.swing.JTextField();
+        dicLabel = new javax.swing.JTextField();
+        icLabel = new javax.swing.JTextField();
+        cenaTriple = new javax.swing.JLabel();
+        cenaDouble = new javax.swing.JLabel();
+        cenaSingle = new javax.swing.JLabel();
+        scrollPanel = new javax.swing.JScrollPane();
+        textArea = new javax.swing.JTextArea();
         bgImageLabel = new javax.swing.JLabel();
         bg2ImageLabel = new javax.swing.JLabel();
         bg3ImageLabel = new javax.swing.JLabel();
@@ -79,6 +99,7 @@ public class GUI extends javax.swing.JFrame {
 
         hledejPokojeButton.setBorder(null);
         hledejPokojeButton.setContentAreaFilled(false);
+        hledejPokojeButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         hledejPokojeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hledejPokojeButtonActionPerformed(evt);
@@ -102,6 +123,7 @@ public class GUI extends javax.swing.JFrame {
 
         nextButton.setBorder(null);
         nextButton.setContentAreaFilled(false);
+        nextButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         nextButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextButtonActionPerformed(evt);
@@ -112,6 +134,7 @@ public class GUI extends javax.swing.JFrame {
 
         nextButton2.setBorder(null);
         nextButton2.setContentAreaFilled(false);
+        nextButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         nextButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nextButton2ActionPerformed(evt);
@@ -122,6 +145,7 @@ public class GUI extends javax.swing.JFrame {
 
         finishButton.setBorder(null);
         finishButton.setContentAreaFilled(false);
+        finishButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         finishButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 finishButtonActionPerformed(evt);
@@ -132,6 +156,7 @@ public class GUI extends javax.swing.JFrame {
 
         backButton2.setBorder(null);
         backButton2.setContentAreaFilled(false);
+        backButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         backButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backButton2ActionPerformed(evt);
@@ -142,6 +167,7 @@ public class GUI extends javax.swing.JFrame {
 
         backButton3.setBorder(null);
         backButton3.setContentAreaFilled(false);
+        backButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         backButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backButton3ActionPerformed(evt);
@@ -152,6 +178,7 @@ public class GUI extends javax.swing.JFrame {
 
         backButton4.setBorder(null);
         backButton4.setContentAreaFilled(false);
+        backButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         backButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backButton4ActionPerformed(evt);
@@ -159,6 +186,24 @@ public class GUI extends javax.swing.JFrame {
         });
         getContentPane().add(backButton4);
         backButton4.setBounds(180, 370, 120, 40);
+
+        pocetTriple.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        pocetTriple.setForeground(new java.awt.Color(255, 51, 51));
+        pocetTriple.setText("0");
+        getContentPane().add(pocetTriple);
+        pocetTriple.setBounds(564, 323, 34, 20);
+
+        pocetDouble.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        pocetDouble.setForeground(new java.awt.Color(255, 51, 51));
+        pocetDouble.setText("0");
+        getContentPane().add(pocetDouble);
+        pocetDouble.setBounds(440, 323, 30, 20);
+
+        pocetSingle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        pocetSingle.setForeground(new java.awt.Color(255, 51, 51));
+        pocetSingle.setText("0");
+        getContentPane().add(pocetSingle);
+        pocetSingle.setBounds(320, 323, 34, 20);
 
         buttonGroup1.add(trippleRadioButton);
         trippleRadioButton.setBorder(null);
@@ -177,6 +222,124 @@ public class GUI extends javax.swing.JFrame {
         singleRadioButton.setContentAreaFilled(false);
         getContentPane().add(singleRadioButton);
         singleRadioButton.setBounds(240, 322, 40, 23);
+
+        jmenoLabel.setBackground(new java.awt.Color(69, 79, 89));
+        jmenoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jmenoLabel.setForeground(new java.awt.Color(255, 255, 255));
+        jmenoLabel.setBorder(null);
+        getContentPane().add(jmenoLabel);
+        jmenoLabel.setBounds(392, 168, 140, 20);
+
+        prijmeniLabel.setBackground(new java.awt.Color(69, 79, 89));
+        prijmeniLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        prijmeniLabel.setForeground(new java.awt.Color(255, 255, 255));
+        prijmeniLabel.setBorder(null);
+        getContentPane().add(prijmeniLabel);
+        prijmeniLabel.setBounds(232, 168, 130, 20);
+
+        mestoLabel.setBackground(new java.awt.Color(69, 79, 89));
+        mestoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        mestoLabel.setForeground(new java.awt.Color(255, 255, 255));
+        mestoLabel.setBorder(null);
+        getContentPane().add(mestoLabel);
+        mestoLabel.setBounds(392, 211, 140, 20);
+
+        statLabel.setBackground(new java.awt.Color(69, 79, 89));
+        statLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        statLabel.setForeground(new java.awt.Color(255, 255, 255));
+        statLabel.setBorder(null);
+        statLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        getContentPane().add(statLabel);
+        statLabel.setBounds(232, 211, 130, 20);
+
+        uliceLabel.setBackground(new java.awt.Color(69, 79, 89));
+        uliceLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        uliceLabel.setForeground(new java.awt.Color(255, 255, 255));
+        uliceLabel.setBorder(null);
+        getContentPane().add(uliceLabel);
+        uliceLabel.setBounds(232, 254, 180, 20);
+
+        cpLabel.setBackground(new java.awt.Color(69, 79, 89));
+        cpLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        cpLabel.setForeground(new java.awt.Color(255, 255, 255));
+        cpLabel.setBorder(null);
+        getContentPane().add(cpLabel);
+        cpLabel.setBounds(438, 254, 80, 20);
+
+        pscLabel.setBackground(new java.awt.Color(69, 79, 89));
+        pscLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        pscLabel.setForeground(new java.awt.Color(255, 255, 255));
+        pscLabel.setBorder(null);
+        getContentPane().add(pscLabel);
+        pscLabel.setBounds(438, 291, 80, 20);
+
+        telefonLabel.setBackground(new java.awt.Color(69, 79, 89));
+        telefonLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        telefonLabel.setForeground(new java.awt.Color(255, 255, 255));
+        telefonLabel.setBorder(null);
+        getContentPane().add(telefonLabel);
+        telefonLabel.setBounds(232, 332, 130, 20);
+
+        emailLabel.setBackground(new java.awt.Color(69, 79, 89));
+        emailLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        emailLabel.setForeground(new java.awt.Color(255, 255, 255));
+        emailLabel.setBorder(null);
+        getContentPane().add(emailLabel);
+        emailLabel.setBounds(392, 332, 140, 20);
+
+        obchLabel.setBackground(new java.awt.Color(69, 79, 89));
+        obchLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        obchLabel.setForeground(new java.awt.Color(255, 255, 255));
+        obchLabel.setBorder(null);
+        getContentPane().add(obchLabel);
+        obchLabel.setBounds(635, 168, 170, 20);
+
+        dicLabel.setBackground(new java.awt.Color(69, 79, 89));
+        dicLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        dicLabel.setForeground(new java.awt.Color(255, 255, 255));
+        dicLabel.setBorder(null);
+        getContentPane().add(dicLabel);
+        dicLabel.setBounds(635, 211, 130, 20);
+
+        icLabel.setBackground(new java.awt.Color(69, 79, 89));
+        icLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        icLabel.setForeground(new java.awt.Color(255, 255, 255));
+        icLabel.setBorder(null);
+        getContentPane().add(icLabel);
+        icLabel.setBounds(635, 254, 130, 20);
+
+        cenaTriple.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cenaTriple.setText("0 ,-");
+        getContentPane().add(cenaTriple);
+        cenaTriple.setBounds(520, 293, 34, 20);
+
+        cenaDouble.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cenaDouble.setText("0 ,-");
+        getContentPane().add(cenaDouble);
+        cenaDouble.setBounds(396, 293, 30, 20);
+
+        cenaSingle.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cenaSingle.setText("0 ,-");
+        getContentPane().add(cenaSingle);
+        cenaSingle.setBounds(270, 293, 34, 20);
+
+        scrollPanel.setBackground(new java.awt.Color(71, 79, 89));
+        scrollPanel.setBorder(null);
+        scrollPanel.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        textArea.setBackground(new java.awt.Color(71, 79, 89));
+        textArea.setColumns(20);
+        textArea.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        textArea.setForeground(new java.awt.Color(255, 255, 255));
+        textArea.setRows(5);
+        textArea.setText("ahoj ahoj ahoj\n\n\n\t\t\ttady bude nějakej souhrn");
+        textArea.setBorder(null);
+        textArea.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        textArea.setFocusable(false);
+        scrollPanel.setViewportView(textArea);
+
+        getContentPane().add(scrollPanel);
+        scrollPanel.setBounds(220, 170, 600, 200);
 
         bgImageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/obrazek1.png"))); // NOI18N
         getContentPane().add(bgImageLabel);
@@ -290,16 +453,36 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel bg5ImageLabel;
     private javax.swing.JLabel bgImageLabel;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JLabel cenaDouble;
+    private javax.swing.JLabel cenaSingle;
+    private javax.swing.JLabel cenaTriple;
     private javax.swing.JTextField checkInTextField;
     private javax.swing.JTextField checkOutTextField;
+    private javax.swing.JTextField cpLabel;
+    private javax.swing.JTextField dicLabel;
     private javax.swing.JRadioButton doubleRadioButton;
+    private javax.swing.JTextField emailLabel;
     private javax.swing.JButton finishButton;
     private javax.swing.JButton hledejPokojeButton;
+    private javax.swing.JTextField icLabel;
+    private javax.swing.JTextField jmenoLabel;
+    private javax.swing.JTextField mestoLabel;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton nextButton2;
+    private javax.swing.JTextField obchLabel;
+    private javax.swing.JLabel pocetDouble;
+    private javax.swing.JLabel pocetSingle;
+    private javax.swing.JLabel pocetTriple;
+    private javax.swing.JTextField prijmeniLabel;
+    private javax.swing.JTextField pscLabel;
+    private javax.swing.JScrollPane scrollPanel;
     private javax.swing.JRadioButton singleRadioButton;
+    private javax.swing.JTextField statLabel;
+    private javax.swing.JTextField telefonLabel;
+    private javax.swing.JTextArea textArea;
     private javax.swing.JRadioButton trippleRadioButton;
     private javax.swing.JComboBox typPokojeCombo;
+    private javax.swing.JTextField uliceLabel;
     // End of variables declaration//GEN-END:variables
 
     private void setAllInvisible() {
@@ -323,6 +506,30 @@ public class GUI extends javax.swing.JFrame {
         bg5ImageLabel.setVisible(false);
         bgImageLabel.setVisible(false);
 
+        pocetSingle.setVisible(false);
+        pocetDouble.setVisible(false);
+        pocetTriple.setVisible(false);
+        cenaSingle.setVisible(false);
+        cenaDouble.setVisible(false);
+        cenaTriple.setVisible(false);
+
+        jmenoLabel.setVisible(false);
+        prijmeniLabel.setVisible(false);
+        mestoLabel.setVisible(false);
+        statLabel.setVisible(false);
+        uliceLabel.setVisible(false);
+        cpLabel.setVisible(false);
+        pscLabel.setVisible(false);
+        telefonLabel.setVisible(false);
+        emailLabel.setVisible(false);
+        obchLabel.setVisible(false);
+        icLabel.setVisible(false);
+        dicLabel.setVisible(false);
+        
+        
+        textArea.setVisible(false);
+        scrollPanel.setVisible(false);
+
         hledejPokojeButton.setVisible(false);
         typPokojeCombo.setVisible(false);
     }
@@ -345,18 +552,39 @@ public class GUI extends javax.swing.JFrame {
         doubleRadioButton.setVisible(true);
         trippleRadioButton.setVisible(true);
         nextButton.setVisible(true);
+        pocetSingle.setVisible(true);
+        pocetDouble.setVisible(true);
+        pocetTriple.setVisible(true);
+        cenaSingle.setVisible(true);
+        cenaDouble.setVisible(true);
+        cenaTriple.setVisible(true);
+        
     }
 
     private void invokeThirdFloor() {
         bg3ImageLabel.setVisible(true);
         nextButton2.setVisible(true);
         backButton2.setVisible(true);
+        jmenoLabel.setVisible(true);
+        prijmeniLabel.setVisible(true);
+        statLabel.setVisible(true);
+        mestoLabel.setVisible(true);
+        uliceLabel.setVisible(true);
+        cpLabel.setVisible(true);
+        pscLabel.setVisible(true);
+        telefonLabel.setVisible(true);
+        emailLabel.setVisible(true);
+        obchLabel.setVisible(true);
+        icLabel.setVisible(true);
+        dicLabel.setVisible(true);
     }
 
     private void invokeFourthFloor() {
         bg4ImageLabel.setVisible(true);
         backButton3.setVisible(true);
         finishButton.setVisible(true);
+        textArea.setVisible(true);
+        scrollPanel.setVisible(true);
     }
 
     private void invokeFifthFloor() {
