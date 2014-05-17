@@ -5,11 +5,18 @@
  */
 package hotelproject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Kuba
  */
 public class GUI extends javax.swing.JFrame {
+
+    String typPokoje;
+    String cena;
+    String[] odDatum, doDatum;
 
     /**
      * Creates new form GUI
@@ -46,8 +53,8 @@ public class GUI extends javax.swing.JFrame {
         trippleRadioButton = new javax.swing.JRadioButton();
         doubleRadioButton = new javax.swing.JRadioButton();
         singleRadioButton = new javax.swing.JRadioButton();
-        jmenoLabel = new javax.swing.JTextField();
         prijmeniLabel = new javax.swing.JTextField();
+        jmenoLabel = new javax.swing.JTextField();
         mestoLabel = new javax.swing.JTextField();
         statLabel = new javax.swing.JTextField();
         uliceLabel = new javax.swing.JTextField();
@@ -61,6 +68,8 @@ public class GUI extends javax.swing.JFrame {
         cenaTriple = new javax.swing.JLabel();
         cenaDouble = new javax.swing.JLabel();
         cenaSingle = new javax.swing.JLabel();
+        scrollPanel1 = new javax.swing.JScrollPane();
+        textArea1 = new javax.swing.JTextArea();
         scrollPanel = new javax.swing.JScrollPane();
         textArea = new javax.swing.JTextArea();
         bgImageLabel = new javax.swing.JLabel();
@@ -208,34 +217,37 @@ public class GUI extends javax.swing.JFrame {
         buttonGroup1.add(trippleRadioButton);
         trippleRadioButton.setBorder(null);
         trippleRadioButton.setContentAreaFilled(false);
+        trippleRadioButton.setEnabled(false);
         getContentPane().add(trippleRadioButton);
         trippleRadioButton.setBounds(487, 322, 40, 23);
 
         buttonGroup1.add(doubleRadioButton);
         doubleRadioButton.setBorder(null);
         doubleRadioButton.setContentAreaFilled(false);
+        doubleRadioButton.setEnabled(false);
         getContentPane().add(doubleRadioButton);
         doubleRadioButton.setBounds(364, 322, 40, 23);
 
         buttonGroup1.add(singleRadioButton);
         singleRadioButton.setBorder(null);
         singleRadioButton.setContentAreaFilled(false);
+        singleRadioButton.setEnabled(false);
         getContentPane().add(singleRadioButton);
         singleRadioButton.setBounds(240, 322, 40, 23);
-
-        jmenoLabel.setBackground(new java.awt.Color(69, 79, 89));
-        jmenoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jmenoLabel.setForeground(new java.awt.Color(255, 255, 255));
-        jmenoLabel.setBorder(null);
-        getContentPane().add(jmenoLabel);
-        jmenoLabel.setBounds(392, 168, 140, 20);
 
         prijmeniLabel.setBackground(new java.awt.Color(69, 79, 89));
         prijmeniLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         prijmeniLabel.setForeground(new java.awt.Color(255, 255, 255));
         prijmeniLabel.setBorder(null);
         getContentPane().add(prijmeniLabel);
-        prijmeniLabel.setBounds(232, 168, 130, 20);
+        prijmeniLabel.setBounds(392, 168, 140, 20);
+
+        jmenoLabel.setBackground(new java.awt.Color(69, 79, 89));
+        jmenoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jmenoLabel.setForeground(new java.awt.Color(255, 255, 255));
+        jmenoLabel.setBorder(null);
+        getContentPane().add(jmenoLabel);
+        jmenoLabel.setBounds(232, 168, 130, 20);
 
         mestoLabel.setBackground(new java.awt.Color(69, 79, 89));
         mestoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -308,20 +320,40 @@ public class GUI extends javax.swing.JFrame {
         getContentPane().add(icLabel);
         icLabel.setBounds(635, 254, 130, 20);
 
-        cenaTriple.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cenaTriple.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        cenaTriple.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         cenaTriple.setText("0 ,-");
         getContentPane().add(cenaTriple);
-        cenaTriple.setBounds(520, 293, 34, 20);
+        cenaTriple.setBounds(494, 293, 60, 20);
 
-        cenaDouble.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cenaDouble.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        cenaDouble.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         cenaDouble.setText("0 ,-");
         getContentPane().add(cenaDouble);
-        cenaDouble.setBounds(396, 293, 30, 20);
+        cenaDouble.setBounds(376, 293, 50, 20);
 
-        cenaSingle.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        cenaSingle.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        cenaSingle.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         cenaSingle.setText("0 ,-");
         getContentPane().add(cenaSingle);
-        cenaSingle.setBounds(270, 293, 34, 20);
+        cenaSingle.setBounds(244, 293, 60, 20);
+
+        scrollPanel1.setBackground(new java.awt.Color(71, 79, 89));
+        scrollPanel1.setBorder(null);
+        scrollPanel1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        textArea1.setBackground(new java.awt.Color(71, 79, 89));
+        textArea1.setColumns(20);
+        textArea1.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
+        textArea1.setForeground(new java.awt.Color(255, 255, 255));
+        textArea1.setRows(5);
+        textArea1.setBorder(null);
+        textArea1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        textArea1.setFocusable(false);
+        scrollPanel1.setViewportView(textArea1);
+
+        getContentPane().add(scrollPanel1);
+        scrollPanel1.setBounds(550, 170, 310, 200);
 
         scrollPanel.setBackground(new java.awt.Color(71, 79, 89));
         scrollPanel.setBorder(null);
@@ -332,14 +364,13 @@ public class GUI extends javax.swing.JFrame {
         textArea.setFont(new java.awt.Font("Tahoma", 3, 12)); // NOI18N
         textArea.setForeground(new java.awt.Color(255, 255, 255));
         textArea.setRows(5);
-        textArea.setText("ahoj ahoj ahoj\n\n\n\t\t\ttady bude nějakej souhrn");
         textArea.setBorder(null);
         textArea.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         textArea.setFocusable(false);
         scrollPanel.setViewportView(textArea);
 
         getContentPane().add(scrollPanel);
-        scrollPanel.setBounds(220, 170, 600, 200);
+        scrollPanel.setBounds(230, 170, 320, 200);
 
         bgImageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/obrazek1.png"))); // NOI18N
         getContentPane().add(bgImageLabel);
@@ -371,9 +402,78 @@ public class GUI extends javax.swing.JFrame {
     private void hledejPokojeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hledejPokojeButtonActionPerformed
         setAllInvisible();
         invokeSecondFloor();
-        //poslat požadavek o seznam volnych pokoju
+        String[] checkInDate;
+        String[] checkOutDate;
+        checkInDate = checkInTextField.getText().split("/");
+        checkOutDate = checkOutTextField.getText().split("/");
+
+        if (checkInDate.length == 3 && checkOutDate.length == 3) {
+            for (int i = 0; i < 3; i++) {
+                if (isNumber(checkInDate[i]) && isNumber(checkOutDate[i])) {
+                    //poslat požadavek do databáze na volné pokoje v datu: 
+                    //od den: checkInDate[0], mesic: checkInDate[1], rok: checkInDate[2]       
+                    //do den: checkOutDate[0], mesic: checkOutDate[1], rok: checkOutDate[2]
+                    List<Pokoje> singleList = new ArrayList<>();
+                    List<Pokoje> doubleList = new ArrayList<>();
+                    List<Pokoje> tripleList = new ArrayList<>();
+
+                    //test
+                    singleList.add(new Pokoje());
+
+                    pocetSingle.setText(String.valueOf(singleList.size()));
+                    pocetDouble.setText(String.valueOf(doubleList.size()));
+                    pocetTriple.setText(String.valueOf(tripleList.size()));
+
+                    cenaSingle.setText("720 ,-");
+                    cenaDouble.setText("1250 ,-");
+                    cenaTriple.setText("2250 ,-");
+
+                    odDatum = checkInDate;
+                    doDatum = checkOutDate;
+
+                } else {
+                    checkInTextField.setText("DD/MM/YYYY");
+                    checkOutTextField.setText("DD/MM/YYYY");
+                }
+
+            }
+        } else {
+            checkInTextField.setText("DD/MM/YYYY");
+            checkOutTextField.setText("DD/MM/YYYY");
+        }
+
+        switch (typPokojeCombo.getSelectedIndex()) {
+            case 0:
+                singleRadioButton.setSelected(true);
+                typPokoje = "single";
+                cena = "720 ,-";
+                break;
+            case 1:
+                doubleRadioButton.setSelected(true);
+                typPokoje = "double";
+                cena = "1250 ,-";
+                break;
+            case 2:
+                trippleRadioButton.setSelected(true);
+                typPokoje = "triple";
+                cena = "2250 ,-";
+                break;
+        }
+
+        if ("0".equals(pocetSingle.getText()) && "0".equals(pocetDouble.getText()) && "0".equals(pocetTriple.getText())) {
+            nextButton.setVisible(false);
+        }
     }//GEN-LAST:event_hledejPokojeButtonActionPerformed
 
+    private boolean isNumber(String s) {
+        try {
+            int c = Integer.parseInt(s);
+
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
     private void typPokojeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typPokojeComboActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_typPokojeComboActionPerformed
@@ -381,12 +481,42 @@ public class GUI extends javax.swing.JFrame {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         setAllInvisible();
         invokeThirdFloor();
+
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void nextButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton2ActionPerformed
         setAllInvisible();
-        invokeFourthFloor();
+        if (vyplneno()) {
+
+            textArea.setText("Jméno: \n" + jmenoLabel.getText() + " "
+                    + prijmeniLabel.getText() + "\n\n"
+                    + "Adresa: \n" + statLabel.getText() + ", "
+                    + mestoLabel.getText() + "\n"
+                    + uliceLabel.getText() + " " + cpLabel.getText() + " " + pscLabel.getText() + "\n\n"
+                    + "tel: " + telefonLabel.getText() + ", e-mail: " + emailLabel.getText()
+                    + "\n\n"
+                    + "Obchodní jméno/název firmy: \n" + obchLabel.getText() + "\n"
+                    + icLabel.getText() + ", " + dicLabel.getText()
+            );
+            textArea1.setText("Pokoj: \n" + typPokoje + "\n\n"
+                    + "Cena: \n" + cena + " / noc \n"
+                    + "\n\n"
+                    + "Období: \n"
+                    + "od: " + odDatum[0] + "." + odDatum[1] + "." + odDatum[2]+" - "
+                    + "do: " + doDatum[0] + "." + doDatum[1] + "." + doDatum[2]
+            );
+            invokeFourthFloor();
+        } else {
+            invokeThirdFloor();
+        }
+
     }//GEN-LAST:event_nextButton2ActionPerformed
+
+    private boolean vyplneno() {
+        return !"".equals(jmenoLabel.getText()) && !"".equals(prijmeniLabel.getText()) && !"".equals(mestoLabel.getText())
+                && !"".equals(statLabel.getText()) && !"".equals(uliceLabel.getText()) && !"".equals(cpLabel.getText())
+                && !"".equals(pscLabel.getText()) && !"".equals(emailLabel.getText());
+    }
 
     private void backButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButton2ActionPerformed
         setAllInvisible();
@@ -400,6 +530,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
         setAllInvisible();
+        //tady vytvořit hosta a objednat pokoj
         invokeFifthFloor();
     }//GEN-LAST:event_finishButtonActionPerformed
 
@@ -476,10 +607,12 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JTextField prijmeniLabel;
     private javax.swing.JTextField pscLabel;
     private javax.swing.JScrollPane scrollPanel;
+    private javax.swing.JScrollPane scrollPanel1;
     private javax.swing.JRadioButton singleRadioButton;
     private javax.swing.JTextField statLabel;
     private javax.swing.JTextField telefonLabel;
     private javax.swing.JTextArea textArea;
+    private javax.swing.JTextArea textArea1;
     private javax.swing.JRadioButton trippleRadioButton;
     private javax.swing.JComboBox typPokojeCombo;
     private javax.swing.JTextField uliceLabel;
@@ -513,8 +646,8 @@ public class GUI extends javax.swing.JFrame {
         cenaDouble.setVisible(false);
         cenaTriple.setVisible(false);
 
-        jmenoLabel.setVisible(false);
         prijmeniLabel.setVisible(false);
+        jmenoLabel.setVisible(false);
         mestoLabel.setVisible(false);
         statLabel.setVisible(false);
         uliceLabel.setVisible(false);
@@ -525,10 +658,11 @@ public class GUI extends javax.swing.JFrame {
         obchLabel.setVisible(false);
         icLabel.setVisible(false);
         dicLabel.setVisible(false);
-        
-        
+
         textArea.setVisible(false);
+        textArea1.setVisible(false);
         scrollPanel.setVisible(false);
+        scrollPanel1.setVisible(false);
 
         hledejPokojeButton.setVisible(false);
         typPokojeCombo.setVisible(false);
@@ -558,15 +692,15 @@ public class GUI extends javax.swing.JFrame {
         cenaSingle.setVisible(true);
         cenaDouble.setVisible(true);
         cenaTriple.setVisible(true);
-        
+
     }
 
     private void invokeThirdFloor() {
         bg3ImageLabel.setVisible(true);
         nextButton2.setVisible(true);
         backButton2.setVisible(true);
-        jmenoLabel.setVisible(true);
         prijmeniLabel.setVisible(true);
+        jmenoLabel.setVisible(true);
         statLabel.setVisible(true);
         mestoLabel.setVisible(true);
         uliceLabel.setVisible(true);
@@ -584,7 +718,9 @@ public class GUI extends javax.swing.JFrame {
         backButton3.setVisible(true);
         finishButton.setVisible(true);
         textArea.setVisible(true);
+        textArea1.setVisible(true);
         scrollPanel.setVisible(true);
+        scrollPanel1.setVisible(true);
     }
 
     private void invokeFifthFloor() {
