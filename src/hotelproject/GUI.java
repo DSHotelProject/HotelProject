@@ -5,8 +5,18 @@
  */
 package hotelproject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 /**
  *
@@ -17,6 +27,7 @@ public class GUI extends javax.swing.JFrame {
     String typPokoje;
     String cena;
     String[] odDatum, doDatum;
+    List<Pokoje> listPokoju;
 
     /**
      * Creates new form GUI
@@ -409,58 +420,126 @@ public class GUI extends javax.swing.JFrame {
 
         if (checkInDate.length == 3 && checkOutDate.length == 3) {
             for (int i = 0; i < 3; i++) {
-                if (isNumber(checkInDate[i]) && isNumber(checkOutDate[i])) {
-                    //poslat požadavek do databáze na volné pokoje v datu: 
-                    //od den: checkInDate[0], mesic: checkInDate[1], rok: checkInDate[2]       
-                    //do den: checkOutDate[0], mesic: checkOutDate[1], rok: checkOutDate[2]
-                    List<Pokoje> singleList = new ArrayList<>();
-                    List<Pokoje> doubleList = new ArrayList<>();
-                    List<Pokoje> tripleList = new ArrayList<>();
-
-                    //test
-                    singleList.add(new Pokoje());
-
-                    pocetSingle.setText(String.valueOf(singleList.size()));
-                    pocetDouble.setText(String.valueOf(doubleList.size()));
-                    pocetTriple.setText(String.valueOf(tripleList.size()));
-
-                    cenaSingle.setText("720 ,-");
-                    cenaDouble.setText("1250 ,-");
-                    cenaTriple.setText("2250 ,-");
-
-                    odDatum = checkInDate;
-                    doDatum = checkOutDate;
-
-                } else {
+                if (!isNumber(checkInDate[i]) || !isNumber(checkOutDate[i])) {
                     checkInTextField.setText("DD/MM/YYYY");
                     checkOutTextField.setText("DD/MM/YYYY");
+                    nextButton.setVisible(false);
+                    return;
                 }
-
+                System.out.println("jsou to cisla");
             }
         } else {
             checkInTextField.setText("DD/MM/YYYY");
             checkOutTextField.setText("DD/MM/YYYY");
+            nextButton.setVisible(false);
+            return;
         }
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
+        EntityManager em = emf.createEntityManager();;
+        //em.getTransaction().begin();
+
+        List<Pokoje> listPokoju = null;
+        Query queryPokoje;
         switch (typPokojeCombo.getSelectedIndex()) {
             case 0:
+                queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
+                queryPokoje.setParameter("pocetLuzek", 1);
+                listPokoju = queryPokoje.getResultList();
                 singleRadioButton.setSelected(true);
                 typPokoje = "single";
                 cena = "720 ,-";
                 break;
             case 1:
+                queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
+                queryPokoje.setParameter("pocetLuzek", 2);
+                listPokoju = queryPokoje.getResultList();
                 doubleRadioButton.setSelected(true);
                 typPokoje = "double";
                 cena = "1250 ,-";
                 break;
             case 2:
+                queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
+                queryPokoje.setParameter("pocetLuzek", 3);
+                listPokoju = queryPokoje.getResultList();
                 trippleRadioButton.setSelected(true);
                 typPokoje = "triple";
                 cena = "2250 ,-";
                 break;
         }
 
-        if ("0".equals(pocetSingle.getText()) && "0".equals(pocetDouble.getText()) && "0".equals(pocetTriple.getText())) {
+        Query queryRezervace = em.createNamedQuery("Rezervace.findAll");
+        List<Rezervace> listRezervaci = queryRezervace.getResultList();
+
+        for (int j = 0; j < listRezervaci.size(); j++) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date prijezd = null;
+            Date odjezd = null;
+            try {
+                prijezd = sdf.parse(checkInDate[2] + "-" + checkInDate[1] + "-" + checkInDate[0]);
+                odjezd = sdf.parse(checkOutDate[2] + "-" + checkOutDate[1] + "-" + checkOutDate[0]);
+            } catch (ParseException ex) {
+                System.err.println("Can't process this date.");
+            }
+
+            if (prijezd.before(listRezervaci.get(j).getDatumDo()) && prijezd.after(listRezervaci.get(j).getDatumOd())) {
+                for (int i = 0; i < listRezervaci.get(j).getPokojeCollection().size(); i++) {
+                    Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
+                    while (it.hasNext()) {
+                        Pokoje tmp = it.next();
+                        if (listPokoju.contains(tmp)) {
+                            System.out.println("mažu pokoj: " + tmp.toString());
+                            listPokoju.remove(tmp);
+                        }
+                    }
+                }
+            }
+            if (odjezd.before(listRezervaci.get(j).getDatumDo()) && odjezd.after(listRezervaci.get(j).getDatumOd())) {
+                for (int i = 0; i < listRezervaci.get(j).getPokojeCollection().size(); i++) {
+                    Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
+                    while (it.hasNext()) {
+                        Pokoje tmp = it.next();
+                        if (listPokoju.contains(tmp)) {
+                            System.out.println("mažu pokoj: " + tmp.toString());
+                            listPokoju.remove(tmp);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        System.out.println("vypis pokoju: ");
+        for (int i = 0; i < listPokoju.size(); i++) {
+            System.out.println(listPokoju.get(i).toString());
+        }
+
+        this.listPokoju = listPokoju;
+
+        pocetSingle.setText("?");
+        pocetDouble.setText("?");
+        pocetTriple.setText("?");
+
+        switch (typPokoje) {
+            case "single":
+                pocetSingle.setText(String.valueOf(listPokoju.size()));
+                break;
+            case "double":
+                pocetDouble.setText(String.valueOf(listPokoju.size()));
+                break;
+            case "triple":
+                pocetTriple.setText(String.valueOf(listPokoju.size()));
+                break;
+        }
+
+        cenaSingle.setText("720 ,-");
+        cenaDouble.setText("1250 ,-");
+        cenaTriple.setText("2250 ,-");
+
+        odDatum = checkInDate;
+        doDatum = checkOutDate;
+
+        if ("0".equals(pocetSingle.getText()) || "0".equals(pocetDouble.getText()) || "0".equals(pocetTriple.getText())) {
             nextButton.setVisible(false);
         }
     }//GEN-LAST:event_hledejPokojeButtonActionPerformed
@@ -481,13 +560,11 @@ public class GUI extends javax.swing.JFrame {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         setAllInvisible();
         invokeThirdFloor();
-
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void nextButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton2ActionPerformed
         setAllInvisible();
         if (vyplneno()) {
-
             textArea.setText("Jméno: \n" + jmenoLabel.getText() + " "
                     + prijmeniLabel.getText() + "\n\n"
                     + "Adresa: \n" + statLabel.getText() + ", "
@@ -502,14 +579,23 @@ public class GUI extends javax.swing.JFrame {
                     + "Cena: \n" + cena + " / noc \n"
                     + "\n\n"
                     + "Období: \n"
-                    + "od: " + odDatum[0] + "." + odDatum[1] + "." + odDatum[2]+" - "
+                    + "od: " + odDatum[0] + "." + odDatum[1] + "." + odDatum[2] + " - "
                     + "do: " + doDatum[0] + "." + doDatum[1] + "." + doDatum[2]
             );
+
+            if ("".equals(obchLabel.getText())) {
+                obchLabel = null;
+            }
+            if ("".equals(icLabel.getText())) {
+                icLabel = null;
+            }
+            if ("".equals(dicLabel.getText())) {
+                dicLabel = null;
+            }
             invokeFourthFloor();
         } else {
             invokeThirdFloor();
         }
-
     }//GEN-LAST:event_nextButton2ActionPerformed
 
     private boolean vyplneno() {
@@ -530,7 +616,9 @@ public class GUI extends javax.swing.JFrame {
 
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
         setAllInvisible();
-        //tady vytvořit hosta a objednat pokoj
+        //tady transakcí všechno poslat do databáze
+        
+        
         invokeFifthFloor();
     }//GEN-LAST:event_finishButtonActionPerformed
 
