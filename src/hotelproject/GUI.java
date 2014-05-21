@@ -615,12 +615,22 @@ public class GUI extends javax.swing.JFrame {
         em.getTransaction().begin();
 
         //vyrobime adresu
-        Adresy adresa = new Adresy(statLabel.getText(), mestoLabel.getText(), uliceLabel.getText(), cpLabel.getText());
+        Adresy adresa = new Adresy();
+        adresa.setStat(statLabel.getText());
+        adresa.setMesto(mestoLabel.getText());
+        adresa.setPsc(pscLabel.getText());
+        adresa.setUlice(uliceLabel.getText());
+        adresa.setCp(cpLabel.getText());
         em.persist(adresa);        
         
         //vytvorime hosta a pridame mu adresu
-        Hoste host = new Hoste(jmenoLabel.getText() + " " + prijmeniLabel.getText(), telefonLabel.getText(),
-                emailLabel.getText(), obchLabel.getText(), icLabel.getText(), dicLabel.getText());
+        Hoste host = new Hoste();
+        host.setJmenoOsoby(jmenoLabel.getText() + " " + prijmeniLabel.getText());
+        host.setTelefon(telefonLabel.getText());
+        host.setEMail(emailLabel.getText());
+        host.setObchJmeno(obchLabel.getText());
+        host.setIc(icLabel.getText());
+        host.setDic(dicLabel.getText());
         host.setAdresyIdAdresy(adresa);
         em.persist(host);
         
@@ -628,8 +638,13 @@ public class GUI extends javax.swing.JFrame {
         Pokoje pokoj = listPokoju.get(0);
         
         //vytvorime novou rezervaci, ktere pridame vytvoreneho hosta a vyselectovany pokoj
-        Rezervace rezervace = new Rezervace(pocetLuzek, odDatum, doDatum, new BigDecimal(0), false);
-
+        Rezervace rezervace = new Rezervace();
+        rezervace.setPocetOsob(pocetLuzek);
+        rezervace.setDatumOd(odDatum);
+        rezervace.setDatumDo(doDatum);
+        rezervace.setVyseZalohy(BigDecimal.ZERO);
+        rezervace.setZalohaZapl(false);
+        
         Collection<Hoste> hoste = new ArrayList<>();
         hoste.add(host);
         rezervace.setHosteCollection(hoste);

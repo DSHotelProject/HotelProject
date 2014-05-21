@@ -78,7 +78,8 @@ public class Rezervace implements Serializable {
         this.idRezervace = idRezervace;
     }
 
-    public Rezervace(short pocetOsob, Date datumOd, Date datumDo, BigDecimal vyseZalohy, boolean zalohaZapl) {
+    public Rezervace(Integer idRezervace, short pocetOsob, Date datumOd, Date datumDo, BigDecimal vyseZalohy, boolean zalohaZapl) {
+        this.idRezervace = idRezervace;
         this.pocetOsob = pocetOsob;
         this.datumOd = datumOd;
         this.datumDo = datumDo;

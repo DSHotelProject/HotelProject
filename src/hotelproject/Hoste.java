@@ -76,15 +76,6 @@ public class Hoste implements Serializable {
         this.jmenoOsoby = jmenoOsoby;
     }
 
-    public Hoste(String jmenoOsoby, String telefon, String eMail, String obchJmeno, String ic, String dic) {
-        this.jmenoOsoby = jmenoOsoby;
-        this.eMail = eMail;
-        this.telefon = telefon;
-        this.ic = ic;
-        this.dic = dic;
-        this.obchJmeno = obchJmeno;
-    }
-
     public Integer getIdHosta() {
         return idHosta;
     }
