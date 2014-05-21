@@ -17,9 +17,9 @@ public class HotelProject {
 
     public static void main(String[] args) {
 //Entity manager and transaction
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
+        //EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
+        //EntityManager em = emf.createEntityManager();
+        //EntityTransaction tx = em.getTransaction();
         GUI g = new GUI();
         g.setVisible(true);
 

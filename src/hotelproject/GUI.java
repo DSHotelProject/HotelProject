@@ -6,6 +6,7 @@
 package hotelproject;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
@@ -26,10 +28,10 @@ import javax.persistence.Query;
 public class GUI extends javax.swing.JFrame {
 
     String typPokoje;
-    String cena;
-    Date odDatum, doDatum;
     List<Pokoje> listPokoju;
     short pocetLuzek = 0;
+    Date checkInDate;
+    Date checkOutDate;
 
     /**
      * Creates new form GUI
@@ -414,50 +416,55 @@ public class GUI extends javax.swing.JFrame {
     private void hledejPokojeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hledejPokojeButtonActionPerformed
         setAllInvisible();
         invokeSecondFloor();
-        String dateFormat = "DD/MM/YYYY";
-        Date checkInDate;
-        Date checkOutDate;
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            checkInDate = new SimpleDateFormat(dateFormat).parse(checkInTextField.getText());
-            checkOutDate = new SimpleDateFormat(dateFormat).parse(checkOutTextField.getText());
-            System.out.println("jsou to data");
+            checkInDate = dateFormat.parse(checkInTextField.getText());
+            checkOutDate = dateFormat.parse(checkOutTextField.getText());
+
         } catch (ParseException ex) {
-            checkInTextField.setText(dateFormat);
-            checkOutTextField.setText(dateFormat);
+            checkInTextField.setText("DD/MM/YYYY");
+            checkOutTextField.setText("DD/MM/YYYY");
             nextButton.setVisible(false);
             return;
         }
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
         EntityManager em = emf.createEntityManager();
-        //em.getTransaction().begin();
 
-        List<Pokoje> listPokoju = null;
+        List<Pokoje> listP = null;
         Query queryPokoje;
+
+        pocetSingle.setText("?");
+        pocetDouble.setText("?");
+        pocetTriple.setText("?");
+        
         switch (typPokojeCombo.getSelectedIndex()) {
             case 0:
                 queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
                 queryPokoje.setParameter("pocetLuzek", 1);
-                listPokoju = queryPokoje.getResultList();
+                listP = queryPokoje.getResultList();
                 singleRadioButton.setSelected(true);
                 typPokoje = "single";
-                cena = "720 ,-";
+                pocetLuzek = 1;
+                pocetSingle.setText(String.valueOf(listP.size()));
                 break;
             case 1:
                 queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
                 queryPokoje.setParameter("pocetLuzek", 2);
-                listPokoju = queryPokoje.getResultList();
+                listP = queryPokoje.getResultList();
                 doubleRadioButton.setSelected(true);
                 typPokoje = "double";
-                cena = "1250 ,-";
+                pocetLuzek = 2;
+                pocetDouble.setText(String.valueOf(listP.size()));
                 break;
             case 2:
                 queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
                 queryPokoje.setParameter("pocetLuzek", 3);
-                listPokoju = queryPokoje.getResultList();
+                listP = queryPokoje.getResultList();
                 trippleRadioButton.setSelected(true);
                 typPokoje = "triple";
-                cena = "2250 ,-";
+                pocetLuzek = 3;
+                pocetTriple.setText(String.valueOf(listP.size()));
                 break;
         }
 
@@ -470,8 +477,8 @@ public class GUI extends javax.swing.JFrame {
                     Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
                     while (it.hasNext()) {
                         Pokoje tmp = it.next();
-                        if (listPokoju.contains(tmp)) {
-                            listPokoju.remove(tmp);
+                        if (listP.contains(tmp)) {
+                            listP.remove(tmp);
                         }
                     }
                 }
@@ -481,8 +488,8 @@ public class GUI extends javax.swing.JFrame {
                     Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
                     while (it.hasNext()) {
                         Pokoje tmp = it.next();
-                        if (listPokoju.contains(tmp)) {
-                            listPokoju.remove(tmp);
+                        if (listP.contains(tmp)) {
+                            listP.remove(tmp);
                         }
                     }
                 }
@@ -490,53 +497,19 @@ public class GUI extends javax.swing.JFrame {
 
         }
 
-        System.out.println("vypis pokoju: ");
-        for (int i = 0; i < listPokoju.size(); i++) {
-            System.out.println(listPokoju.get(i).toString());
-        }
-
-        this.listPokoju = listPokoju;
-
-        pocetSingle.setText("?");
-        pocetDouble.setText("?");
-        pocetTriple.setText("?");
-
-        switch (typPokoje) {
-            case "single":
-                pocetLuzek = 1;
-                pocetSingle.setText(String.valueOf(listPokoju.size()));
-                break;
-            case "double":
-                pocetLuzek = 2;
-                pocetDouble.setText(String.valueOf(listPokoju.size()));
-                break;
-            case "triple":
-                pocetLuzek = 3;
-                pocetTriple.setText(String.valueOf(listPokoju.size()));
-                break;
-        }
+        this.listPokoju = listP;
 
         cenaSingle.setText("720 ,-");
         cenaDouble.setText("1250 ,-");
         cenaTriple.setText("2250 ,-");
 
-        odDatum = checkInDate;
-        doDatum = checkOutDate;
-
         if ("0".equals(pocetSingle.getText()) || "0".equals(pocetDouble.getText()) || "0".equals(pocetTriple.getText())) {
             nextButton.setVisible(false);
         }
+        em.close();
+        emf.close();
     }//GEN-LAST:event_hledejPokojeButtonActionPerformed
 
-    private boolean isNumber(String s) {
-        try {
-            int c = Integer.parseInt(s);
-
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
     private void typPokojeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typPokojeComboActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_typPokojeComboActionPerformed
@@ -560,20 +533,21 @@ public class GUI extends javax.swing.JFrame {
                     + icLabel.getText() + ", " + dicLabel.getText()
             );
             Calendar cal = Calendar.getInstance();
-            cal.setTime(odDatum);
+            cal.setTime(checkInDate);
             int odYear = cal.get(Calendar.YEAR);
             int odMonth = cal.get(Calendar.MONTH);
             int odDay = cal.get(Calendar.DAY_OF_MONTH);
-            cal.setTime(doDatum);
+
+            cal.setTime(checkOutDate);
             int doYear = cal.get(Calendar.YEAR);
             int doMonth = cal.get(Calendar.MONTH);
             int doDay = cal.get(Calendar.DAY_OF_MONTH);
             textArea1.setText("Pokoj: \n" + typPokoje + "\n\n"
-                    + "Cena: \n" + cena + " / noc \n"
+                    + "Cena: \n" + listPokoju.get(0).getCenaZaNoc() + " / noc \n"
                     + "\n\n"
                     + "Období: \n"
-                    + "od: " + odDay + "." + odMonth + "." + odYear + " - "
-                    + "do: " + doDay + "." + doMonth + "." + doYear
+                    + "od: " + odDay + "." + (odMonth + 1) + "." + odYear + " - "
+                    + "do: " + doDay + "." + (doMonth + 1) + "." + doYear
             );
 
             if ("".equals(obchLabel.getText())) {
@@ -612,18 +586,14 @@ public class GUI extends javax.swing.JFrame {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
         EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
+        EntityTransaction et = em.getTransaction();
+        et.begin();
 
-        //vyrobime adresu
-        Adresy adresa = new Adresy();
-        adresa.setStat(statLabel.getText());
-        adresa.setMesto(mestoLabel.getText());
-        adresa.setPsc(pscLabel.getText());
-        adresa.setUlice(uliceLabel.getText());
-        adresa.setCp(cpLabel.getText());
-        em.persist(adresa);        
-        
-        //vytvorime hosta a pridame mu adresu
+        //udelame adresu
+        Adresy adresa = new Adresy(statLabel.getText(), uliceLabel.getText(), mestoLabel.getText(), cpLabel.getText(), pscLabel.getText());
+        em.persist(adresa);
+
+        //vytvorime hosta a predame mu adresu
         Hoste host = new Hoste();
         host.setJmenoOsoby(jmenoLabel.getText() + " " + prijmeniLabel.getText());
         host.setTelefon(telefonLabel.getText());
@@ -633,18 +603,18 @@ public class GUI extends javax.swing.JFrame {
         host.setDic(dicLabel.getText());
         host.setAdresyIdAdresy(adresa);
         em.persist(host);
-        
-        //z listu vybereme pokoj
+
+        //z listu vybereme prvni volny pokoj
         Pokoje pokoj = listPokoju.get(0);
-        
+
         //vytvorime novou rezervaci, ktere pridame vytvoreneho hosta a vyselectovany pokoj
         Rezervace rezervace = new Rezervace();
         rezervace.setPocetOsob(pocetLuzek);
-        rezervace.setDatumOd(odDatum);
-        rezervace.setDatumDo(doDatum);
+        rezervace.setDatumOd(checkInDate);
+        rezervace.setDatumDo(checkOutDate);
         rezervace.setVyseZalohy(BigDecimal.ZERO);
         rezervace.setZalohaZapl(false);
-        
+
         Collection<Hoste> hoste = new ArrayList<>();
         hoste.add(host);
         rezervace.setHosteCollection(hoste);
@@ -653,10 +623,10 @@ public class GUI extends javax.swing.JFrame {
         pokoje.add(pokoj);
         rezervace.setPokojeCollection(pokoje);
         em.persist(rezervace);
-        
+
         //commitnem
-        em.getTransaction().commit();
-        
+        et.commit();
+
         invokeFifthFloor();
     }//GEN-LAST:event_finishButtonActionPerformed
 
