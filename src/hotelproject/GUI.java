@@ -5,9 +5,12 @@
  */
 package hotelproject;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +29,7 @@ public class GUI extends javax.swing.JFrame {
     String cena;
     Date odDatum, doDatum;
     List<Pokoje> listPokoju;
+    short pocetLuzek = 0;
 
     /**
      * Creates new form GUI
@@ -467,7 +471,6 @@ public class GUI extends javax.swing.JFrame {
                     while (it.hasNext()) {
                         Pokoje tmp = it.next();
                         if (listPokoju.contains(tmp)) {
-                            System.out.println("mažu pokoj: " + tmp.toString());
                             listPokoju.remove(tmp);
                         }
                     }
@@ -479,7 +482,6 @@ public class GUI extends javax.swing.JFrame {
                     while (it.hasNext()) {
                         Pokoje tmp = it.next();
                         if (listPokoju.contains(tmp)) {
-                            System.out.println("mažu pokoj: " + tmp.toString());
                             listPokoju.remove(tmp);
                         }
                     }
@@ -501,12 +503,15 @@ public class GUI extends javax.swing.JFrame {
 
         switch (typPokoje) {
             case "single":
+                pocetLuzek = 1;
                 pocetSingle.setText(String.valueOf(listPokoju.size()));
                 break;
             case "double":
+                pocetLuzek = 2;
                 pocetDouble.setText(String.valueOf(listPokoju.size()));
                 break;
             case "triple":
+                pocetLuzek = 3;
                 pocetTriple.setText(String.valueOf(listPokoju.size()));
                 break;
         }
@@ -572,13 +577,13 @@ public class GUI extends javax.swing.JFrame {
             );
 
             if ("".equals(obchLabel.getText())) {
-                obchLabel = null;
+                obchLabel.setText(null);
             }
             if ("".equals(icLabel.getText())) {
-                icLabel = null;
+                icLabel.setText(null);
             }
             if ("".equals(dicLabel.getText())) {
-                dicLabel = null;
+                dicLabel.setText(null);
             }
             invokeFourthFloor();
         } else {
@@ -604,8 +609,39 @@ public class GUI extends javax.swing.JFrame {
 
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
         setAllInvisible();
-        //tady transakcí všechno poslat do databáze
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        //vyrobime adresu
+        Adresy adresa = new Adresy(statLabel.getText(), mestoLabel.getText(), uliceLabel.getText(), cpLabel.getText());
+        em.persist(adresa);        
+        
+        //vytvorime hosta a pridame mu adresu
+        Hoste host = new Hoste(jmenoLabel.getText() + " " + prijmeniLabel.getText(), telefonLabel.getText(),
+                emailLabel.getText(), obchLabel.getText(), icLabel.getText(), dicLabel.getText());
+        host.setAdresyIdAdresy(adresa);
+        em.persist(host);
+        
+        //z listu vybereme pokoj
+        Pokoje pokoj = listPokoju.get(0);
+        
+        //vytvorime novou rezervaci, ktere pridame vytvoreneho hosta a vyselectovany pokoj
+        Rezervace rezervace = new Rezervace(pocetLuzek, odDatum, doDatum, new BigDecimal(0), false);
+
+        Collection<Hoste> hoste = new ArrayList<>();
+        hoste.add(host);
+        rezervace.setHosteCollection(hoste);
+
+        Collection<Pokoje> pokoje = new ArrayList<>();
+        pokoje.add(pokoj);
+        rezervace.setPokojeCollection(pokoje);
+        em.persist(rezervace);
+        
+        //commitnem
+        em.getTransaction().commit();
+        
         invokeFifthFloor();
     }//GEN-LAST:event_finishButtonActionPerformed
 
