@@ -46,7 +46,7 @@ public class Hoste implements Serializable {
     @Column(name = "jmeno_osoby")
     private String jmenoOsoby;
     private String telefon;
-    @Column(name = "e-mail")
+    @Column(name = "email")
     private String eMail;
     @Column(name = "obch_jmeno")
     private String obchJmeno;
@@ -181,5 +181,4 @@ public class Hoste implements Serializable {
     public String toString() {
         return "hotelproject.Hoste[ idHosta=" + idHosta + " ]";
     }
-
 }
