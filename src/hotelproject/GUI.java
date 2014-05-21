@@ -7,12 +7,10 @@ package hotelproject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -26,7 +24,7 @@ public class GUI extends javax.swing.JFrame {
 
     String typPokoje;
     String cena;
-    String[] odDatum, doDatum;
+    Date odDatum, doDatum;
     List<Pokoje> listPokoju;
 
     /**
@@ -132,7 +130,6 @@ public class GUI extends javax.swing.JFrame {
         typPokojeCombo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         typPokojeCombo.setForeground(new java.awt.Color(255, 255, 255));
         typPokojeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SINGLE", "DOUBLE", "TRIPPLE" }));
-        typPokojeCombo.setBorder(null);
         typPokojeCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 typPokojeComboActionPerformed(evt);
@@ -413,30 +410,22 @@ public class GUI extends javax.swing.JFrame {
     private void hledejPokojeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hledejPokojeButtonActionPerformed
         setAllInvisible();
         invokeSecondFloor();
-        String[] checkInDate;
-        String[] checkOutDate;
-        checkInDate = checkInTextField.getText().split("/");
-        checkOutDate = checkOutTextField.getText().split("/");
-
-        if (checkInDate.length == 3 && checkOutDate.length == 3) {
-            for (int i = 0; i < 3; i++) {
-                if (!isNumber(checkInDate[i]) || !isNumber(checkOutDate[i])) {
-                    checkInTextField.setText("DD/MM/YYYY");
-                    checkOutTextField.setText("DD/MM/YYYY");
-                    nextButton.setVisible(false);
-                    return;
-                }
-                System.out.println("jsou to cisla");
-            }
-        } else {
-            checkInTextField.setText("DD/MM/YYYY");
-            checkOutTextField.setText("DD/MM/YYYY");
+        String dateFormat = "DD/MM/YYYY";
+        Date checkInDate;
+        Date checkOutDate;
+        try {
+            checkInDate = new SimpleDateFormat(dateFormat).parse(checkInTextField.getText());
+            checkOutDate = new SimpleDateFormat(dateFormat).parse(checkOutTextField.getText());
+            System.out.println("jsou to data");
+        } catch (ParseException ex) {
+            checkInTextField.setText(dateFormat);
+            checkOutTextField.setText(dateFormat);
             nextButton.setVisible(false);
             return;
         }
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
-        EntityManager em = emf.createEntityManager();;
+        EntityManager em = emf.createEntityManager();
         //em.getTransaction().begin();
 
         List<Pokoje> listPokoju = null;
@@ -472,17 +461,7 @@ public class GUI extends javax.swing.JFrame {
         List<Rezervace> listRezervaci = queryRezervace.getResultList();
 
         for (int j = 0; j < listRezervaci.size(); j++) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date prijezd = null;
-            Date odjezd = null;
-            try {
-                prijezd = sdf.parse(checkInDate[2] + "-" + checkInDate[1] + "-" + checkInDate[0]);
-                odjezd = sdf.parse(checkOutDate[2] + "-" + checkOutDate[1] + "-" + checkOutDate[0]);
-            } catch (ParseException ex) {
-                System.err.println("Can't process this date.");
-            }
-
-            if (prijezd.before(listRezervaci.get(j).getDatumDo()) && prijezd.after(listRezervaci.get(j).getDatumOd())) {
+            if (checkInDate.before(listRezervaci.get(j).getDatumDo()) && checkInDate.after(listRezervaci.get(j).getDatumOd())) {
                 for (int i = 0; i < listRezervaci.get(j).getPokojeCollection().size(); i++) {
                     Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
                     while (it.hasNext()) {
@@ -494,7 +473,7 @@ public class GUI extends javax.swing.JFrame {
                     }
                 }
             }
-            if (odjezd.before(listRezervaci.get(j).getDatumDo()) && odjezd.after(listRezervaci.get(j).getDatumOd())) {
+            if (checkOutDate.before(listRezervaci.get(j).getDatumDo()) && checkOutDate.after(listRezervaci.get(j).getDatumOd())) {
                 for (int i = 0; i < listRezervaci.get(j).getPokojeCollection().size(); i++) {
                     Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
                     while (it.hasNext()) {
@@ -575,12 +554,21 @@ public class GUI extends javax.swing.JFrame {
                     + "Obchodní jméno/název firmy: \n" + obchLabel.getText() + "\n"
                     + icLabel.getText() + ", " + dicLabel.getText()
             );
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(odDatum);
+            int odYear = cal.get(Calendar.YEAR);
+            int odMonth = cal.get(Calendar.MONTH);
+            int odDay = cal.get(Calendar.DAY_OF_MONTH);
+            cal.setTime(doDatum);
+            int doYear = cal.get(Calendar.YEAR);
+            int doMonth = cal.get(Calendar.MONTH);
+            int doDay = cal.get(Calendar.DAY_OF_MONTH);
             textArea1.setText("Pokoj: \n" + typPokoje + "\n\n"
                     + "Cena: \n" + cena + " / noc \n"
                     + "\n\n"
                     + "Období: \n"
-                    + "od: " + odDatum[0] + "." + odDatum[1] + "." + odDatum[2] + " - "
-                    + "do: " + doDatum[0] + "." + doDatum[1] + "." + doDatum[2]
+                    + "od: " + odDay + "." + odMonth + "." + odYear + " - "
+                    + "do: " + doDay + "." + doMonth + "." + doYear
             );
 
             if ("".equals(obchLabel.getText())) {
@@ -600,7 +588,7 @@ public class GUI extends javax.swing.JFrame {
 
     private boolean vyplneno() {
         return !"".equals(jmenoLabel.getText()) && !"".equals(prijmeniLabel.getText()) && !"".equals(mestoLabel.getText())
-                && !"".equals(statLabel.getText()) && !"".equals(uliceLabel.getText()) && !"".equals(cpLabel.getText())
+                && !"".equals(uliceLabel.getText()) && !"".equals(cpLabel.getText())
                 && !"".equals(pscLabel.getText()) && !"".equals(emailLabel.getText());
     }
 
@@ -617,8 +605,7 @@ public class GUI extends javax.swing.JFrame {
     private void finishButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_finishButtonActionPerformed
         setAllInvisible();
         //tady transakcí všechno poslat do databáze
-        
-        
+
         invokeFifthFloor();
     }//GEN-LAST:event_finishButtonActionPerformed
 
@@ -634,7 +621,7 @@ public class GUI extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
