@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -105,6 +105,11 @@ public class GUI extends javax.swing.JFrame {
         checkOutTextField.setForeground(new java.awt.Color(255, 255, 255));
         checkOutTextField.setText("DD/MM/YYYY");
         checkOutTextField.setBorder(null);
+        checkOutTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                checkOutTextFieldFocusGained(evt);
+            }
+        });
         checkOutTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 checkOutTextFieldActionPerformed(evt);
@@ -118,6 +123,11 @@ public class GUI extends javax.swing.JFrame {
         checkInTextField.setForeground(new java.awt.Color(255, 255, 255));
         checkInTextField.setText("DD/MM/YYYY");
         checkInTextField.setBorder(null);
+        checkInTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                checkInTextFieldFocusGained(evt);
+            }
+        });
         getContentPane().add(checkInTextField);
         checkInTextField.setBounds(715, 237, 150, 30);
 
@@ -416,12 +426,14 @@ public class GUI extends javax.swing.JFrame {
     private void hledejPokojeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hledejPokojeButtonActionPerformed
         setAllInvisible();
         invokeSecondFloor();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
         try {
             checkInDate = dateFormat.parse(checkInTextField.getText());
             checkOutDate = dateFormat.parse(checkOutTextField.getText());
-
         } catch (ParseException ex) {
+            setAllInvisible();
+            invokeFirstFloor();
+            JOptionPane.showMessageDialog(null, "Datum zadejte ve formátu DD/MM/YYYY.", "Špatný formát data.", JOptionPane.INFORMATION_MESSAGE);
             checkInTextField.setText("DD/MM/YYYY");
             checkOutTextField.setText("DD/MM/YYYY");
             nextButton.setVisible(false);
@@ -437,7 +449,7 @@ public class GUI extends javax.swing.JFrame {
         pocetSingle.setText("?");
         pocetDouble.setText("?");
         pocetTriple.setText("?");
-        
+
         switch (typPokojeCombo.getSelectedIndex()) {
             case 0:
                 queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
@@ -471,30 +483,28 @@ public class GUI extends javax.swing.JFrame {
         Query queryRezervace = em.createNamedQuery("Rezervace.findAll");
         List<Rezervace> listRezervaci = queryRezervace.getResultList();
 
-        for (int j = 0; j < listRezervaci.size(); j++) {
-            if (checkInDate.before(listRezervaci.get(j).getDatumDo()) && checkInDate.after(listRezervaci.get(j).getDatumOd())) {
-                for (int i = 0; i < listRezervaci.get(j).getPokojeCollection().size(); i++) {
-                    Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
-                    while (it.hasNext()) {
-                        Pokoje tmp = it.next();
-                        if (listP.contains(tmp)) {
-                            listP.remove(tmp);
-                        }
+        for (Rezervace r : listRezervaci) {
+            if (!((checkInDate.before(r.getDatumOd()) && checkOutDate.before(r.getDatumOd()))
+                    || (checkInDate.after(r.getDatumDo()) && checkOutDate.after(r.getDatumDo())))) {
+                System.out.println("KO");
+                for (Pokoje tmp : r.getPokojeCollection()) {
+                    if (listP.contains(tmp)) {
+                        listP.remove(tmp);
                     }
                 }
             }
-            if (checkOutDate.before(listRezervaci.get(j).getDatumDo()) && checkOutDate.after(listRezervaci.get(j).getDatumOd())) {
-                for (int i = 0; i < listRezervaci.get(j).getPokojeCollection().size(); i++) {
-                    Iterator<Pokoje> it = listRezervaci.get(j).getPokojeCollection().iterator();
-                    while (it.hasNext()) {
-                        Pokoje tmp = it.next();
-                        if (listP.contains(tmp)) {
-                            listP.remove(tmp);
-                        }
-                    }
-                }
-            }
+        }
 
+        switch (typPokojeCombo.getSelectedIndex()) {
+            case 0:
+                pocetSingle.setText(String.valueOf(listP.size()));
+                break;
+            case 1:
+                pocetDouble.setText(String.valueOf(listP.size()));
+                break;
+            case 2:
+                pocetTriple.setText(String.valueOf(listP.size()));
+                break;
         }
 
         this.listPokoju = listP;
@@ -521,7 +531,8 @@ public class GUI extends javax.swing.JFrame {
 
     private void nextButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButton2ActionPerformed
         setAllInvisible();
-        if (vyplneno()) {
+        String nevyplnenoMsg;
+        if ("".equals(nevyplnenoMsg = nevyplneno())) {
             textArea.setText("Jméno: \n" + jmenoLabel.getText() + " "
                     + prijmeniLabel.getText() + "\n\n"
                     + "Adresa: \n" + statLabel.getText() + ", "
@@ -562,13 +573,37 @@ public class GUI extends javax.swing.JFrame {
             invokeFourthFloor();
         } else {
             invokeThirdFloor();
+            JOptionPane.showMessageDialog(null, nevyplnenoMsg, "Nejsou vyplněny všechny povinné položky.", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_nextButton2ActionPerformed
 
-    private boolean vyplneno() {
-        return !"".equals(jmenoLabel.getText()) && !"".equals(prijmeniLabel.getText()) && !"".equals(mestoLabel.getText())
-                && !"".equals(uliceLabel.getText()) && !"".equals(cpLabel.getText())
-                && !"".equals(pscLabel.getText()) && !"".equals(emailLabel.getText());
+    private String nevyplneno() {
+        String nevyplneno = "";
+        if ("".equals(jmenoLabel.getText())) {
+            nevyplneno += "Jméno, ";
+        }
+        if ("".equals(prijmeniLabel.getText())) {
+            nevyplneno += "Příjmení, ";
+        }
+        if ("".equals(mestoLabel.getText())) {
+            nevyplneno += "Město, ";
+        }
+        if ("".equals(uliceLabel.getText())) {
+            nevyplneno += "Ulice, ";
+        }
+        if ("".equals(cpLabel.getText())) {
+            nevyplneno += "ČP, ";
+        }
+//        if ("".equals(pscLabel.getText())) {
+//            nevyplneno += "PSČ, ";
+//        }
+//        if ("".equals(emailLabel.getText())) {
+//            nevyplneno += "E-mail, ";
+//        }
+        if (!"".equals(nevyplneno)) {
+            nevyplneno = nevyplneno.substring(0, nevyplneno.length() - 2);
+        }
+        return nevyplneno;
     }
 
     private void backButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButton2ActionPerformed
@@ -590,7 +625,13 @@ public class GUI extends javax.swing.JFrame {
         et.begin();
 
         //udelame adresu
-        Adresy adresa = new Adresy(statLabel.getText(), uliceLabel.getText(), mestoLabel.getText(), cpLabel.getText(), pscLabel.getText());
+        Adresy adresa = new Adresy(mestoLabel.getText(), uliceLabel.getText(), cpLabel.getText());
+        if (!"".equals(statLabel.getText())) {
+            adresa.setStat(statLabel.getText());
+        }
+        if (!"".equals(pscLabel.getText())) {
+            adresa.setPsc(pscLabel.getText());
+        }
         em.persist(adresa);
 
         //vytvorime hosta a predame mu adresu
@@ -634,6 +675,14 @@ public class GUI extends javax.swing.JFrame {
         setAllInvisible();
         invokeFirstFloor();
     }//GEN-LAST:event_backButton4ActionPerformed
+
+    private void checkInTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_checkInTextFieldFocusGained
+        checkInTextField.selectAll();
+    }//GEN-LAST:event_checkInTextFieldFocusGained
+
+    private void checkOutTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_checkOutTextFieldFocusGained
+        checkOutTextField.selectAll();
+    }//GEN-LAST:event_checkOutTextFieldFocusGained
 
     /**
      * @param args the command line arguments

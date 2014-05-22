@@ -60,6 +60,12 @@ public class Adresy implements Serializable {
         this.idAdresy = idAdresy;
     }
 
+    public Adresy(String mesto, String ulice, String cp) {
+        this.mesto = mesto;
+        this.ulice = ulice;
+        this.cp = cp;
+    }
+
     public Adresy(String stat, String mesto, String ulice, String cp, String psc) {
         this.stat = stat;
         this.mesto = mesto;
