@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -483,7 +484,7 @@ public class GUI extends javax.swing.JFrame {
 
         String cena;
         if (!listP.isEmpty()) {
-            listP.sort(new Comparator<Pokoje>() {
+            Collections.sort(listP, new Comparator<Pokoje>() {
                 @Override
                 public int compare(Pokoje o1, Pokoje o2) {
                     BigDecimal cena1 = o1.getCenaZaNoc(),
