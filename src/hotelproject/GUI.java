@@ -7,11 +7,13 @@ package hotelproject;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -32,6 +34,7 @@ public class GUI extends javax.swing.JFrame {
     short pocetLuzek = 0;
     Date checkInDate;
     Date checkOutDate;
+    String dateFormatString = "DD/MM/YYYY";
 
     /**
      * Creates new form GUI
@@ -110,11 +113,6 @@ public class GUI extends javax.swing.JFrame {
                 checkOutTextFieldFocusGained(evt);
             }
         });
-        checkOutTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                checkOutTextFieldActionPerformed(evt);
-            }
-        });
         getContentPane().add(checkOutTextField);
         checkOutTextField.setBounds(715, 302, 150, 30);
 
@@ -146,11 +144,6 @@ public class GUI extends javax.swing.JFrame {
         typPokojeCombo.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         typPokojeCombo.setForeground(new java.awt.Color(255, 255, 255));
         typPokojeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SINGLE", "DOUBLE", "TRIPPLE" }));
-        typPokojeCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                typPokojeComboActionPerformed(evt);
-            }
-        });
         getContentPane().add(typPokojeCombo);
         typPokojeCombo.setBounds(700, 400, 210, 40);
 
@@ -419,23 +412,19 @@ public class GUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void checkOutTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOutTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_checkOutTextFieldActionPerformed
-
     private void hledejPokojeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hledejPokojeButtonActionPerformed
         setAllInvisible();
         invokeSecondFloor();
-        DateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
+        DateFormat dateFormat = new SimpleDateFormat(dateFormatString);
         try {
             checkInDate = dateFormat.parse(checkInTextField.getText());
             checkOutDate = dateFormat.parse(checkOutTextField.getText());
         } catch (ParseException ex) {
             setAllInvisible();
             invokeFirstFloor();
-            JOptionPane.showMessageDialog(null, "Datum zadejte ve formátu DD/MM/YYYY.", "Špatný formát data.", JOptionPane.INFORMATION_MESSAGE);
-            checkInTextField.setText("DD/MM/YYYY");
-            checkOutTextField.setText("DD/MM/YYYY");
+            JOptionPane.showMessageDialog(null, "Datum zadejte ve formátu " + dateFormatString + ".", "Špatný formát data", JOptionPane.INFORMATION_MESSAGE);
+            checkInTextField.setText(dateFormatString);
+            checkOutTextField.setText(dateFormatString);
             nextButton.setVisible(false);
             return;
         }
@@ -444,7 +433,7 @@ public class GUI extends javax.swing.JFrame {
         EntityManager em = emf.createEntityManager();
 
         List<Pokoje> listP = null;
-        Query queryPokoje;
+        Query queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
 
         pocetSingle.setText("?");
         pocetDouble.setText("?");
@@ -452,7 +441,6 @@ public class GUI extends javax.swing.JFrame {
 
         switch (typPokojeCombo.getSelectedIndex()) {
             case 0:
-                queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
                 queryPokoje.setParameter("pocetLuzek", 1);
                 listP = queryPokoje.getResultList();
                 singleRadioButton.setSelected(true);
@@ -461,7 +449,6 @@ public class GUI extends javax.swing.JFrame {
                 pocetSingle.setText(String.valueOf(listP.size()));
                 break;
             case 1:
-                queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
                 queryPokoje.setParameter("pocetLuzek", 2);
                 listP = queryPokoje.getResultList();
                 doubleRadioButton.setSelected(true);
@@ -470,7 +457,6 @@ public class GUI extends javax.swing.JFrame {
                 pocetDouble.setText(String.valueOf(listP.size()));
                 break;
             case 2:
-                queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
                 queryPokoje.setParameter("pocetLuzek", 3);
                 listP = queryPokoje.getResultList();
                 trippleRadioButton.setSelected(true);
@@ -495,34 +481,48 @@ public class GUI extends javax.swing.JFrame {
             }
         }
 
+        String cena;
+        if (!listP.isEmpty()) {
+            listP.sort(new Comparator<Pokoje>() {
+                @Override
+                public int compare(Pokoje o1, Pokoje o2) {
+                    BigDecimal cena1 = o1.getCenaZaNoc(),
+                            cena2 = o2.getCenaZaNoc();
+                    return cena1.compareTo(cena2);
+                }
+            });
+
+            BigDecimal bd = listP.get(0).getCenaZaNoc();
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(0);
+            cena = df.format(bd);
+        } else {
+            cena = "?";
+        }
+
         switch (typPokojeCombo.getSelectedIndex()) {
             case 0:
                 pocetSingle.setText(String.valueOf(listP.size()));
+                cenaSingle.setText(cena + " ,-");
                 break;
             case 1:
                 pocetDouble.setText(String.valueOf(listP.size()));
+                cenaDouble.setText(cena + " ,-");
                 break;
             case 2:
                 pocetTriple.setText(String.valueOf(listP.size()));
+                cenaTriple.setText(cena + " ,-");
                 break;
         }
 
         this.listPokoju = listP;
 
-        cenaSingle.setText("720 ,-");
-        cenaDouble.setText("1250 ,-");
-        cenaTriple.setText("2250 ,-");
-
-        if ("0".equals(pocetSingle.getText()) || "0".equals(pocetDouble.getText()) || "0".equals(pocetTriple.getText())) {
+        if (listP.isEmpty()) {
             nextButton.setVisible(false);
         }
         em.close();
         emf.close();
     }//GEN-LAST:event_hledejPokojeButtonActionPerformed
-
-    private void typPokojeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typPokojeComboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_typPokojeComboActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         setAllInvisible();
