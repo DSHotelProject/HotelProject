@@ -40,7 +40,7 @@ public class Adresy implements Serializable {
     @Column(name = "id_adresy")
     private Integer idAdresy;
     @Basic(optional = false)
-    private String stat;
+    private String stat = "česká republika";
     @Basic(optional = false)
     private String mesto;
     @Basic(optional = false)

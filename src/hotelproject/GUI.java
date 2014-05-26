@@ -656,15 +656,17 @@ public class GUI extends javax.swing.JFrame {
         rezervace.setDatumDo(checkOutDate);
         rezervace.setVyseZalohy(BigDecimal.ZERO);
         rezervace.setZalohaZapl(false);
+        em.persist(rezervace);
+        em.flush();
 
-        Collection<Hoste> hoste = new ArrayList<>();
-        hoste.add(host);
-        rezervace.setHosteCollection(hoste);
+        Collection<Rezervace> r = new ArrayList<>();
+        r.add(rezervace);
+        host.setRezervaceCollection(r);
+        em.flush();
 
         Collection<Pokoje> pokoje = new ArrayList<>();
         pokoje.add(pokoj);
         rezervace.setPokojeCollection(pokoje);
-        em.persist(rezervace);
 
         //commitnem
         et.commit();
