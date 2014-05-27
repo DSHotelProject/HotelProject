@@ -467,16 +467,16 @@ public class GUI extends javax.swing.JFrame {
                 break;
         }
 
-        Query queryRezervace = em.createNamedQuery("Rezervace.findAll");
+        Query queryRezervace = em.createNamedQuery("Rezervace.findByDateRange");
+        queryRezervace.setParameter("datumOd", checkInDate);
+        queryRezervace.setParameter("datumDo", checkOutDate);
         List<Rezervace> listRezervaci = queryRezervace.getResultList();
 
         for (Rezervace r : listRezervaci) {
             if (!((checkInDate.before(r.getDatumOd()) && checkOutDate.before(r.getDatumOd()))
                     || (checkInDate.after(r.getDatumDo()) && checkOutDate.after(r.getDatumDo())))) {
                 for (Pokoje tmp : r.getPokojeCollection()) {
-                    if (listP.contains(tmp)) {
-                        listP.remove(tmp);
-                    }
+                    listP.remove(tmp);
                 }
             }
         }
