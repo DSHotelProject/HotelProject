@@ -667,6 +667,7 @@ public class GUI extends javax.swing.JFrame {
         Collection<Pokoje> pokoje = new ArrayList<>();
         pokoje.add(pokoj);
         rezervace.setPokojeCollection(pokoje);
+        em.flush();
 
         //commitnem
         et.commit();

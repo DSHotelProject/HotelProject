@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -64,7 +66,10 @@ public class Rezervace implements Serializable {
     @Column(name = "zaloha_zapl")
     private boolean zalohaZapl;
     private String poznamka;
-    @ManyToMany(mappedBy = "rezervaceCollection")
+    @JoinTable(name = "rezervace_has_pokoje", joinColumns = {
+        @JoinColumn(name = "rezervace_id_rezervace", referencedColumnName = "id_rezervace")}, inverseJoinColumns = {
+        @JoinColumn(name = "pokoje_id_pokoje", referencedColumnName = "id_pokoje")})
+    @ManyToMany
     private Collection<Pokoje> pokojeCollection;
     @ManyToMany(mappedBy = "rezervaceCollection")
     private Collection<Hoste> hosteCollection;
