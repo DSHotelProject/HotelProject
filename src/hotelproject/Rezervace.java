@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Rezervace.findByPocetOsob", query = "SELECT r FROM Rezervace r WHERE r.pocetOsob = :pocetOsob"),
     @NamedQuery(name = "Rezervace.findByDatumOd", query = "SELECT r FROM Rezervace r WHERE r.datumOd = :datumOd"),
     @NamedQuery(name = "Rezervace.findByDatumDo", query = "SELECT r FROM Rezervace r WHERE r.datumDo = :datumDo"),
+    @NamedQuery(name = "Rezervace.findByDateRange", query = "SELECT r FROM Rezervace r WHERE (r.datumOd between :datumOd and :datumDo) OR (r.datumDo between :datumOd and :datumDo) OR (r.datumOd < :datumOd AND r.datumDo > :datumDo)"),
     @NamedQuery(name = "Rezervace.findByVyseZalohy", query = "SELECT r FROM Rezervace r WHERE r.vyseZalohy = :vyseZalohy"),
     @NamedQuery(name = "Rezervace.findByZalohaZapl", query = "SELECT r FROM Rezervace r WHERE r.zalohaZapl = :zalohaZapl"),
     @NamedQuery(name = "Rezervace.findByPoznamka", query = "SELECT r FROM Rezervace r WHERE r.poznamka = :poznamka")})
