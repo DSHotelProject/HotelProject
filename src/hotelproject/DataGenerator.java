@@ -49,7 +49,7 @@ public class DataGenerator {
         generateReservations(hoste, 0.8);
 
         List<Hoste> allHoste = em.createNamedQuery("Hoste.findAll").getResultList();
-        generateReservations(allHoste, 0.2);
+        generateReservations(allHoste, 0.001);
 
         em.close();
         emf.close();
@@ -96,11 +96,16 @@ public class DataGenerator {
             em.merge(host);
             em.flush();
 
+            Collection<Pokoje> pokoje = new ArrayList<>();
+            pokoje.add(pokoj);
+            r.setPokojeCollection(pokoje);
+            em.flush();
+
             et.commit();
         }
     }
 
-    private static Pokoje getPokojFor(EntityManager em, Date checkIn, Date checkOut) {
+    private static Pokoje getPokojFor(EntityManager em, Date checkInDate, Date checkOutDate) {
         Query queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
 
         queryPokoje.setParameter("pocetLuzek", RANDOM.nextInt(5) + 1);
@@ -109,16 +114,16 @@ public class DataGenerator {
             return null;
         }
 
-        Query queryRezervace = em.createNamedQuery("Rezervace.findAll");
+        Query queryRezervace = em.createNamedQuery("Rezervace.findByDateRange");
+        queryRezervace.setParameter("datumOd", checkInDate);
+        queryRezervace.setParameter("datumDo", checkOutDate);
         List<Rezervace> listRezervaci = queryRezervace.getResultList();
 
         for (Rezervace r : listRezervaci) {
-            if (!((checkIn.before(r.getDatumOd()) && checkOut.before(r.getDatumOd()))
-                    || (checkIn.after(r.getDatumDo()) && checkOut.after(r.getDatumDo())))) {
+            if (!((checkInDate.before(r.getDatumOd()) && checkOutDate.before(r.getDatumOd()))
+                    || (checkInDate.after(r.getDatumDo()) && checkOutDate.after(r.getDatumDo())))) {
                 for (Pokoje tmp : r.getPokojeCollection()) {
-                    if (listP.contains(tmp)) {
-                        listP.remove(tmp);
-                    }
+                    listP.remove(tmp);
                 }
             }
         }
