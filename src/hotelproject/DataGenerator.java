@@ -50,6 +50,9 @@ public class DataGenerator {
 
         List<Hoste> allHoste = em.createNamedQuery("Hoste.findAll").getResultList();
         generateReservations(allHoste, 0.2);
+
+        em.close();
+        emf.close();
     }
 
     private static void generateReservations(List<Hoste> hoste, double probabilty) {
