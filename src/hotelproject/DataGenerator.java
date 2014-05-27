@@ -4,13 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 /**
  *
@@ -18,7 +23,7 @@ import javax.persistence.Persistence;
  */
 public class DataGenerator {
 
-    static int NUMBER = 100;
+    static int NUMBER = 10;
     static List<String> JMENA = loadAllLines("/resources/jmena.txt");
     static List<String> PRIJMENI = loadAllLines("/resources/prijmeni.txt");
     static List<String> MESTA = loadAllLines("/resources/mesta.txt");
@@ -41,6 +46,78 @@ public class DataGenerator {
             em.persist(h);
         }
         et.commit();
+        generateReservations(hoste);
+    }
+
+    private static void generateReservations(List<Hoste> hoste) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
+        EntityManager em = emf.createEntityManager();
+        for (Hoste host : hoste) {
+            if (Math.random() < 0.2) {
+                continue;
+            }
+
+            GregorianCalendar gc = new GregorianCalendar();
+            int year = 2000 + (int) Math.round(Math.random() * (2015 - 2000));
+            int dayInYear = 1 + (int) Math.round(Math.random() * (gc.getActualMaximum(GregorianCalendar.DAY_OF_YEAR) - 1));
+            gc.set(GregorianCalendar.YEAR, year);
+            gc.set(GregorianCalendar.DAY_OF_YEAR, dayInYear);
+            Date checkIn = gc.getTime();
+            gc.add(GregorianCalendar.DATE, RANDOM.nextInt(14) + 1);
+            Date checkOut = gc.getTime();
+
+            EntityTransaction et = em.getTransaction();
+            et.begin();
+            Pokoje pokoj = getPokojFor(em, checkIn, checkOut);
+            if (pokoj == null) {
+                et.rollback();
+            }
+
+            Rezervace r = new Rezervace();
+            int pocetOsob = pokoj.getPocetLuzek();
+            pocetOsob -= RANDOM.nextInt(pocetOsob);
+            r.setPocetOsob((short) pocetOsob);
+            r.setDatumOd(checkIn);
+            r.setDatumDo(checkOut);
+            r.setVyseZalohy(BigDecimal.ZERO);
+            r.setZalohaZapl(false);
+            em.persist(r);
+            em.flush();
+
+            Collection<Rezervace> rezervace = new ArrayList<>();
+            rezervace.add(r);
+            host.setRezervaceCollection(rezervace);
+            em.merge(host);
+            em.flush();
+
+            et.commit();
+        }
+    }
+
+    private static Pokoje getPokojFor(EntityManager em, Date checkIn, Date checkOut) {
+        Query queryPokoje = em.createNamedQuery("Pokoje.findByPocetLuzek");
+
+        queryPokoje.setParameter("pocetLuzek", RANDOM.nextInt(5) + 1);
+        List<Pokoje> listP = queryPokoje.getResultList();
+        if (listP.isEmpty()) {
+            return null;
+        }
+
+        Query queryRezervace = em.createNamedQuery("Rezervace.findAll");
+        List<Rezervace> listRezervaci = queryRezervace.getResultList();
+
+        for (Rezervace r : listRezervaci) {
+            if (!((checkIn.before(r.getDatumOd()) && checkOut.before(r.getDatumOd()))
+                    || (checkIn.after(r.getDatumDo()) && checkOut.after(r.getDatumDo())))) {
+                for (Pokoje tmp : r.getPokojeCollection()) {
+                    if (listP.contains(tmp)) {
+                        listP.remove(tmp);
+                    }
+                }
+            }
+        }
+
+        return listP.get(RANDOM.nextInt(listP.size()));
     }
 
     private static List<Hoste> generateHoste(int number) {

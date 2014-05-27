@@ -473,7 +473,6 @@ public class GUI extends javax.swing.JFrame {
         for (Rezervace r : listRezervaci) {
             if (!((checkInDate.before(r.getDatumOd()) && checkOutDate.before(r.getDatumOd()))
                     || (checkInDate.after(r.getDatumDo()) && checkOutDate.after(r.getDatumDo())))) {
-                System.out.println("KO");
                 for (Pokoje tmp : r.getPokojeCollection()) {
                     if (listP.contains(tmp)) {
                         listP.remove(tmp);
