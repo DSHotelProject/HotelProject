@@ -46,14 +46,17 @@ public class DataGenerator {
             em.persist(h);
         }
         et.commit();
-        generateReservations(hoste);
+        generateReservations(hoste, 0.8);
+
+        List<Hoste> allHoste = em.createNamedQuery("Hoste.findAll").getResultList();
+        generateReservations(allHoste, 0.2);
     }
 
-    private static void generateReservations(List<Hoste> hoste) {
+    private static void generateReservations(List<Hoste> hoste, double probabilty) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("HotelProjectPU");
         EntityManager em = emf.createEntityManager();
         for (Hoste host : hoste) {
-            if (Math.random() < 0.2) {
+            if (Math.random() < 1 - probabilty) {
                 continue;
             }
 
