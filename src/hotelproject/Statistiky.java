@@ -37,7 +37,7 @@ public class Statistiky {
             }
         }
         double obsazenost = ((double) obsazeno) / kapacita;
-        System.out.println("Prumerna obsazenost pokoju je: " + obsazenost * 100 + " %");
+        System.out.printf("Prumerna obsazenost pokoju je %.2f procent.\n", obsazenost * 100);
     }
 
     private static void nejviceZakaznikuZMesta(EntityManager em) {
@@ -65,6 +65,7 @@ public class Statistiky {
         Query query = em.createQuery("SELECT NEW hotelproject.RezervaceStats(SUBSTRING(CAST(r.datumOd AS VARCHAR(7)),6,2), COUNT(SUBSTRING(CAST(r.datumOd AS VARCHAR(7)),6,2))) FROM Rezervace r GROUP BY CAST(r.datumOd AS VARCHAR(7)) ORDER BY SUBSTRING(CAST(r.datumOd AS VARCHAR(7)),6,2) DESC");
         // MONTH(r.datumOd) nefunguje
         // GROUP BY SUBSTRING(CAST(r.datumOd AS VARCHAR(7)),6,2) nefunguje
+        // GROUP BY DATE_PART('MONTH',r.datumOd) nefunguje
         em.getTransaction().begin();
         List<RezervaceStats> l = query.getResultList();
         em.getTransaction().commit();

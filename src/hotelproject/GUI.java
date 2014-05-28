@@ -35,7 +35,7 @@ public class GUI extends javax.swing.JFrame {
     short pocetLuzek = 0;
     Date checkInDate;
     Date checkOutDate;
-    String dateFormatString = "DD/MM/YYYY";
+    String dateFormatString = "dd/MM/yyyy";
 
     /**
      * Creates new form GUI
